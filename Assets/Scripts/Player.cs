@@ -17,13 +17,15 @@ public class Player : MonoBehaviour
     public Material[] toAssign, cubeMats;
     [Header("RoadMesh")]
     public GameObject[] mats;
-
+    public Animator animator;
     bool stop = false;
 
     // Start is called before the first frame update
     void Start()
     {
-
+        int random = Random.Range(0, transform.GetChild(0).childCount);
+        cube.transform.GetChild(random).gameObject.SetActive(true);
+        animator = cube.transform.GetChild(random).GetComponent<Animator>();
         pathCreator = GameObject.FindGameObjectWithTag("PlayerPath").gameObject.GetComponent<PathCreator>();
         //Debug.Log(pathCreator.bezierPath.NumAnchorPoints);
         slider.maxValue = pathCreator.path.length;
@@ -34,7 +36,7 @@ public class Player : MonoBehaviour
         }
         mats[PlayerPrefs.GetInt("LevelNo") - 1].GetComponent<Renderer>().material = toAssign[PlayerPrefs.GetInt("ColorAssign") - 1];
         cube.GetComponent<Renderer>().material = cubeMats[PlayerPrefs.GetInt("ColorAssign") - 1];
-        toAssign[PlayerPrefs.GetInt("LevelNo") - 1].SetFloat("_Fill", 0);
+        toAssign[Random.Range(0, 5)].SetFloat("_Fill", 0);
         percentComplete.enabled = false;
         transform.position = pathCreator.path.GetPointAtDistance(distanceTraveled, endOfPathInstruction);
         transform.rotation = pathCreator.path.GetRotationAtDistance(distanceTraveled, endOfPathInstruction);
@@ -70,7 +72,12 @@ public class Player : MonoBehaviour
             transform.rotation = pathCreator.path.GetRotationAtDistance(distanceTraveled, endOfPathInstruction);
             slider.value = distanceTraveled;
             percentComplete.text = ((int)(distanceTraveled / slider.maxValue * 100)).ToString() + "% Complete";
-            toAssign[PlayerPrefs.GetInt("LevelNo") - 1].SetFloat("_Fill", distanceTraveled / slider.maxValue);
+            //toAssign[PlayerPrefs.GetInt("LevelNo") - 1].SetFloat("_Fill", distanceTraveled / slider.maxValue);
+            toAssign[Random.Range(0, 5)].SetFloat("_Fill", distanceTraveled / slider.maxValue);
+            if (!animator.GetBool("Go"))
+            {
+                animator.SetBool("Go", true);
+            }
         }
         else
         {
@@ -105,19 +112,21 @@ public class Player : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if (stop)
         {
             if (Application.platform == RuntimePlatform.Android)
             {
-                if (Input.touchCount > 0&& Input.touchCount<2)
+                if (Input.touchCount > 0 && Input.touchCount < 2)
                 {
-                        Debug.Log("pc movement");
+                    Debug.Log("pc movement");
                     PcMovement();
                 }
                 else
                 {
+                    animator.SetBool("Go", false);
+                    Debug.Log("false");
                     speed = 2.5f;
                 }
             }
@@ -132,9 +141,15 @@ public class Player : MonoBehaviour
                 }
                 else
                 {
+                    animator.SetBool("Go", false);
+                    Debug.Log("false");
                     speed = 2.5f;
                 }
             }
+
+        }
+        else
+        {
 
         }
 

@@ -44,7 +44,7 @@ public class UiManager : MonoBehaviour
     public AudioSource bgMusic, buttonClick;
 
     public Button music;
-    public Sprite on,off;
+    public Sprite on, off;
     bool isSound = false;
     void Awake()
     {
@@ -61,8 +61,8 @@ public class UiManager : MonoBehaviour
     {
         mainMenu.SetActive(true);
         playerScript = playerRef.GetComponent<Player>();
-        levelText.text = "Level " + (PlayerPrefs.GetInt("GameComplete")*40) + PlayerPrefs.GetInt("LevelNo").ToString();
-        
+        levelText.text = "Level " + (PlayerPrefs.GetInt("GameComplete") * 40) + PlayerPrefs.GetInt("LevelNo").ToString();
+
     }
 
     #region Panels
@@ -72,17 +72,19 @@ public class UiManager : MonoBehaviour
         mainMenu.SetActive(false);
         gamePlay.SetActive(true);
         playerScript.ActivatePlayerMovement();
-       // AdsManager.instance.Show_Banner();
+        AdsDemoManager.Instance.ShowBannerAd();
+        // AdsManager.instance.Show_Banner();
     }
 
     public void OnLevelComplete()
     {
         Invoke("CompleteLevel", 2f);
+        AdsDemoManager.Instance.ShowInterstitialAd();
         //AdsManager.instance.Show_AdmobInterstitial();
     }
 
     void CompleteLevel()
-    { 
+    {
         levelCompletePanel.SetActive(true);
         PlayerPrefs.SetInt("ColorAssign", PlayerPrefs.GetInt("ColorAssign") + 1);
         PlayerPrefs.SetInt("LevelNo", PlayerPrefs.GetInt("LevelNo") + 1);
@@ -97,6 +99,7 @@ public class UiManager : MonoBehaviour
     public void OnLevelFailed()
     {
         levelFailedPanel.SetActive(true);
+        AdsDemoManager.Instance.ShowInterstitialAd();
         //AdsManager.instance.Show_AdmobInterstitial();       
     }
     public void OnContinuePlaying()
@@ -110,10 +113,11 @@ public class UiManager : MonoBehaviour
 
     #region Button CLicks
     public void OnPauseClick()
-    { 
+    {
         buttonClick.Play();
         Time.timeScale = 0;
         pausePanel.SetActive(true);
+        AdsDemoManager.Instance.ShowInterstitialAd();
         //AdsManager.instance.Show_AdmobInterstitial();
     }
 
@@ -128,22 +132,27 @@ public class UiManager : MonoBehaviour
     {
         buttonClick.Play();
         Time.timeScale = 1;
-       
+
         //SceneManager.LoadScene(SceneManager.GetActiveScene());
-        Scene scene = SceneManager.GetActiveScene(); 
+        Scene scene = SceneManager.GetActiveScene();
         SceneManager.LoadScene(scene.name);
+        AdsDemoManager.Instance.HideBannerAd();
         //AdsManager.instance.Destroy_Banner();
     }
     public void OnNextClick()
     {
         buttonClick.Play();
         SceneManager.LoadScene("Loading");
+        AdsDemoManager.Instance.HideBannerAd();
         //AdsManager.instance.Destroy_Banner();
     }
 
     public void OnContinueClick()
     {
         buttonClick.Play();
+        AdsDemoManager.Instance.rewardEvent.RemoveAllListeners();
+        AdsDemoManager.Instance.rewardEvent.AddListener(ResumeGameAfterVideoWatched);
+        AdsDemoManager.Instance.ShowRewardedAd();
         ////AdsManager.instance.Show_ResumeVideo();
     }
 
@@ -161,7 +170,7 @@ public class UiManager : MonoBehaviour
         {
             OnLevelFailed();
         }
-        
+
     }
 
     public void NoThanks()
@@ -175,7 +184,11 @@ public class UiManager : MonoBehaviour
     public void Skiptrack()
     {
         buttonClick.Play();
+        AdsDemoManager.Instance.rewardEvent.AddListener(TrackSkippedComplete);
+        AdsDemoManager.Instance.rewardEvent.RemoveAllListeners();
+        AdsDemoManager.Instance.ShowRewardedAd();
         //AdsManager.instance.Show_SkipTrackVideo();
+        AdsDemoManager.Instance.HideBannerAd();
         //AdsManager.instance.Destroy_Banner();
     }
 
@@ -186,39 +199,39 @@ public class UiManager : MonoBehaviour
             PlayerPrefs.SetInt("ColorAssign", PlayerPrefs.GetInt("ColorAssign") + 1);
             PlayerPrefs.SetInt("LevelNo", PlayerPrefs.GetInt("LevelNo") + 1);
             SceneManager.LoadScene("Loading");
-        } 
+        }
     }
 
     #endregion
-
 
     #region Buttons
     public void MoreGamesButtonClick()
     {
 
-    #if UNITY_ANDROID
+#if UNITY_ANDROID
         buttonClick.Play();
-        Application.OpenURL(MoreAppAndriod);
+        //Application.OpenURL(MoreAppAndriod);
+        Application.OpenURL("https://appgallery.huawei.com/app/C104449289");
 
-    #elif UNITY_IOS
+#elif UNITY_IOS
           Application.OpenURL(MoreAppiOS); 
 #endif
     }
 
     public void RateUsButtonClick()
     {
-    #if UNITY_ANDROID
+#if UNITY_ANDROID
         buttonClick.Play();
-        Application.OpenURL(RateUsAndriod);
-    #elif UNITY_IOS
+        Application.OpenURL("https://appgallery.huawei.com/app/C104449289");
+#elif UNITY_IOS
           Application.OpenURL(RateUsiOS); 
-    #endif
+#endif
     }
 
     public void Privacy()
     {
         buttonClick.Play();
-        Application.OpenURL("https://sites.google.com/view/hadi-technologies/home");
+        Application.OpenURL("https://sites.google.com/view/ommygames/home");
     }
     #endregion
 
@@ -242,5 +255,5 @@ public class UiManager : MonoBehaviour
     }
     #endregion
 
-   
+
 }
