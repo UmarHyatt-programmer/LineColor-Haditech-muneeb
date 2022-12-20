@@ -21,11 +21,13 @@ MonoBehaviour:
     - UnityBannerAdSizeType
     - BannerAdPositionType
     - ShowBannerOnLoad
+    - UseTestAds
     _values:
     - True
     - True
     - True
     - False
     - BANNER_SIZE_320_50
-    - POSITION_TOP
+    - POSITION_BOTTOM
     - False
+    - True

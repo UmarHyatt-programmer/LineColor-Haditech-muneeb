@@ -19,7 +19,7 @@ public class Player : MonoBehaviour
     public GameObject[] mats;
     public Animator animator;
     bool stop = false;
-
+    int currentMatindex;
     // Start is called before the first frame update
     void Start()
     {
@@ -36,7 +36,7 @@ public class Player : MonoBehaviour
         }
         mats[PlayerPrefs.GetInt("LevelNo") - 1].GetComponent<Renderer>().material = toAssign[PlayerPrefs.GetInt("ColorAssign") - 1];
         cube.GetComponent<Renderer>().material = cubeMats[PlayerPrefs.GetInt("ColorAssign") - 1];
-        toAssign[Random.Range(0, 5)].SetFloat("_Fill", 0);
+        toAssign[PlayerPrefs.GetInt("LevelNo") - 1].SetFloat("_Fill", 0);
         percentComplete.enabled = false;
         transform.position = pathCreator.path.GetPointAtDistance(distanceTraveled, endOfPathInstruction);
         transform.rotation = pathCreator.path.GetRotationAtDistance(distanceTraveled, endOfPathInstruction);
@@ -66,14 +66,11 @@ public class Player : MonoBehaviour
         if (distanceTraveled <= pathCreator.path.length)
         {
             distanceTraveled += speed * Time.deltaTime;
-
-
             transform.position = pathCreator.path.GetPointAtDistance(distanceTraveled, endOfPathInstruction);
             transform.rotation = pathCreator.path.GetRotationAtDistance(distanceTraveled, endOfPathInstruction);
             slider.value = distanceTraveled;
             percentComplete.text = ((int)(distanceTraveled / slider.maxValue * 100)).ToString() + "% Complete";
-            //toAssign[PlayerPrefs.GetInt("LevelNo") - 1].SetFloat("_Fill", distanceTraveled / slider.maxValue);
-            toAssign[Random.Range(0, 5)].SetFloat("_Fill", distanceTraveled / slider.maxValue);
+            toAssign[PlayerPrefs.GetInt("LevelNo") - 1].SetFloat("_Fill", distanceTraveled / slider.maxValue);
             if (!animator.GetBool("Go"))
             {
                 animator.SetBool("Go", true);
@@ -146,13 +143,7 @@ public class Player : MonoBehaviour
                     speed = 2.5f;
                 }
             }
-
         }
-        else
-        {
-
-        }
-
     }
 
 

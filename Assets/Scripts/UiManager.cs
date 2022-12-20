@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using HmsPlugin;
 
 
 public class UiManager : MonoBehaviour
@@ -62,7 +63,6 @@ public class UiManager : MonoBehaviour
         mainMenu.SetActive(true);
         playerScript = playerRef.GetComponent<Player>();
         levelText.text = "Level " + (PlayerPrefs.GetInt("GameComplete") * 40) + PlayerPrefs.GetInt("LevelNo").ToString();
-
     }
 
     #region Panels
@@ -95,7 +95,6 @@ public class UiManager : MonoBehaviour
             PlayerPrefs.SetInt("GameComplete", PlayerPrefs.GetInt("GameComplete") + 1);
         }
     }
-
     public void OnLevelFailed()
     {
         levelFailedPanel.SetActive(true);
@@ -110,15 +109,13 @@ public class UiManager : MonoBehaviour
     }
     #endregion
 
-
     #region Button CLicks
     public void OnPauseClick()
     {
         buttonClick.Play();
         Time.timeScale = 0;
         pausePanel.SetActive(true);
-        AdsDemoManager.Instance.ShowInterstitialAd();
-        //AdsManager.instance.Show_AdmobInterstitial();
+        //0AdsManager.instance.Show_AdmobInterstitial();
     }
 
     public void OnResumeClick()
@@ -132,7 +129,6 @@ public class UiManager : MonoBehaviour
     {
         buttonClick.Play();
         Time.timeScale = 1;
-
         //SceneManager.LoadScene(SceneManager.GetActiveScene());
         Scene scene = SceneManager.GetActiveScene();
         SceneManager.LoadScene(scene.name);
@@ -150,14 +146,26 @@ public class UiManager : MonoBehaviour
     public void OnContinueClick()
     {
         buttonClick.Play();
-        AdsDemoManager.Instance.rewardEvent.RemoveAllListeners();
-        AdsDemoManager.Instance.rewardEvent.AddListener(ResumeGameAfterVideoWatched);
-        AdsDemoManager.Instance.ShowRewardedAd();
+        SetRewardButton(UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponent<Button>());
+        HMSAdsKitManager.Instance.OnRewarded += ResumeGameAfterVideoWatched;
+        if (HMSAdsKitManager.Instance.rewardedView?.Loaded == true)
+        {
+            AdsDemoManager.Instance.ShowRewardedAd();
+        }
+        else
+        {
+            RewardAdsFailed();
+        }
         ////AdsManager.instance.Show_ResumeVideo();
     }
-
-    public void ResumeGameAfterVideoWatched()
+    public GameObject adNotavailable;
+    public void RewardAdsFailed()
     {
+        adNotavailable.SetActive(true);
+    }
+    public void ResumeGameAfterVideoWatched(HuaweiMobileServices.Ads.Reward reward)
+    {
+        HMSAdsKitManager.Instance.OnRewarded -= ResumeGameAfterVideoWatched;
         if (GameManager.resume == true)
         {
             Time.timeScale = 1;
@@ -180,20 +188,33 @@ public class UiManager : MonoBehaviour
         gamePlay.SetActive(false);
         levelFailedPanel.SetActive(true);
     }
-
+    public async void SetRewardButton(Button button)
+    {
+        button.interactable=false;
+        await System.Threading.Tasks.Task.Delay(4000);
+        button.interactable=true;
+    }
     public void Skiptrack()
     {
         buttonClick.Play();
-        AdsDemoManager.Instance.rewardEvent.AddListener(TrackSkippedComplete);
-        AdsDemoManager.Instance.rewardEvent.RemoveAllListeners();
-        AdsDemoManager.Instance.ShowRewardedAd();
+        SetRewardButton(UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponent<Button>());
+        HMSAdsKitManager.Instance.OnRewarded += TrackSkippedComplete;
+        if (HMSAdsKitManager.Instance.rewardedView?.Loaded == true)
+        {
+            AdsDemoManager.Instance.ShowRewardedAd();
+        }
+        else
+        {
+            RewardAdsFailed();
+        }
         //AdsManager.instance.Show_SkipTrackVideo();
         AdsDemoManager.Instance.HideBannerAd();
         //AdsManager.instance.Destroy_Banner();
     }
 
-    public void TrackSkippedComplete()
+    public void TrackSkippedComplete(HuaweiMobileServices.Ads.Reward reward)
     {
+        HMSAdsKitManager.Instance.OnRewarded -= TrackSkippedComplete;
         if (GameManager.skipable == true)
         {
             PlayerPrefs.SetInt("ColorAssign", PlayerPrefs.GetInt("ColorAssign") + 1);
@@ -231,7 +252,7 @@ public class UiManager : MonoBehaviour
     public void Privacy()
     {
         buttonClick.Play();
-        Application.OpenURL("https://sites.google.com/view/ommygames/home");
+        Application.OpenURL("https://sites.google.com/view/ommytech-privacy-policy/home");
     }
     #endregion
 

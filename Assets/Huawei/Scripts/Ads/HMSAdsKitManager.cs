@@ -28,7 +28,7 @@ namespace HmsPlugin
 
         private BannerAd bannerView;
         private InterstitialAd interstitialView;
-        private RewardAd rewardedView;
+        public RewardAd rewardedView;
         private SplashAd splashView;
 
         private HMSSettings adsKitSettings;

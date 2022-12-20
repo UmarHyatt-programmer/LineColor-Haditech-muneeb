@@ -3,7 +3,7 @@ using UnityEngine;
 using HmsPlugin;
 using UnityEngine.UI;
 using HuaweiMobileServices.Ads;
-using UnityEngine.Events;
+
 public class AdsDemoManager : MonoBehaviour
 {
     //private Toggle testAdStatusToggle;
@@ -32,19 +32,15 @@ public class AdsDemoManager : MonoBehaviour
 
     private void Start()
     {
+        HMSAdsKitManager.Instance.OnRewardedAdFailedToLoad=OnRewardFail;
         HMSAdsKitManager.Instance.OnRewarded = OnRewarded;
         HMSAdsKitManager.Instance.OnInterstitialAdClosed = OnInterstitialAdClosed;
-
+        HMSAdsKitManager.Instance.OnInterstitialAdFailed=OnInterstitialFail;
         HMSAdsKitManager.Instance.ConsentOnFail = OnConsentFail;
         HMSAdsKitManager.Instance.ConsentOnSuccess = OnConsentSuccess;
         HMSAdsKitManager.Instance.RequestConsentUpdate();
 
-        //testAdStatusToggle = GameObject.FindGameObjectWithTag("Toggle").GetComponent<Toggle>();
-        //testAdStatusToggle.isOn = HMSAdsKitSettings.Instance.Settings.GetBool(HMSAdsKitSettings.UseTestAds);
-        
-
         #region SetNonPersonalizedAd , SetRequestLocation
-
         var builder = HwAds.RequestOptions.ToBuilder();
 
         builder
@@ -85,11 +81,10 @@ public class AdsDemoManager : MonoBehaviour
 
     public void HideBannerAd()
     {
-        Debug.Log("[HMS] AdsDemoManager HideBannerAd");
-
+        Debug.Log("[HMS] AdsDemoManager HideBannerAd"); 
         HMSAdsKitManager.Instance.HideBannerAd();
     }
-    public UnityEvent rewardEvent;
+
     public void ShowRewardedAd()
     {
         Debug.Log("[HMS] AdsDemoManager ShowRewardedAd");
@@ -105,23 +100,26 @@ public class AdsDemoManager : MonoBehaviour
     public void ShowSplashImage()
     {
         Debug.Log("[HMS] ShowSplashImage!");
-
         HMSAdsKitManager.Instance.LoadSplashAd("testq6zq98hecj", SplashAd.SplashAdOrientation.PORTRAIT);
     }
-
     public void ShowSplashVideo()
     {
         Debug.Log("[HMS] ShowSplashVideo!");
-
         HMSAdsKitManager.Instance.LoadSplashAd("testd7c5cewoj6", SplashAd.SplashAdOrientation.PORTRAIT);
     }
 
     public void OnRewarded(Reward reward)
     {
-        rewardEvent.Invoke();
         Debug.Log("[HMS] AdsDemoManager rewarded!");
     }
-
+    public void OnRewardFail(int reward)
+    {
+        Debug.Log(" ads faild to load");
+    }
+    public void OnInterstitialFail(int status)
+    {
+        Debug.Log("interstitial fail");
+    }
     public void OnInterstitialAdClosed()
     {
         Debug.Log("[HMS] AdsDemoManager interstitial ad closed");
