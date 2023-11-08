@@ -54,32 +54,32 @@ public class AdsUIView : MonoBehaviour
 
     private void ButtonClick_ShowInterstitialAd()
     {
-        AdsDemoManager.Instance.ShowInterstitialAd();
+        //AdsDemoManager.Instance.ShowInterstitialAd();
     }
 
     private void ButtonClick_ShowRewardedAd()
     {
-        AdsDemoManager.Instance.ShowRewardedAd();
+       // AdsDemoManager.Instance.ShowRewardedAd();
     }
 
     private void ButtonClick_ShowBannerAd()
     {
-        AdsDemoManager.Instance.ShowBannerAd();
+      //  AdsDemoManager.Instance.ShowBannerAd();
     }
 
     private void ButtonClick_HideBannerAd()
     {
-        AdsDemoManager.Instance.HideBannerAd();
+       // AdsDemoManager.Instance.HideBannerAd();
     }
 
     private void ButtonClick_ShowSplashImage()
     {
-        AdsDemoManager.Instance.ShowSplashImage();
+      //  AdsDemoManager.Instance.ShowSplashImage();
     }
 
     private void ButtonClick_ShowSplashVideo()
     {
-        AdsDemoManager.Instance.ShowSplashVideo();
+      //  AdsDemoManager.Instance.ShowSplashVideo();
     }
 
     #endregion

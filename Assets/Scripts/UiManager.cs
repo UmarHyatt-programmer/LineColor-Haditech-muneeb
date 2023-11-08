@@ -79,7 +79,7 @@ public class UiManager : MonoBehaviour
     public void OnLevelComplete()
     {
         Invoke("CompleteLevel", 2f);
-        AdsDemoManager.Instance.ShowInterstitialAd();
+        AdsDemoManager.Instance.ShowInterstitialAd(()=>{});
         //AdsManager.instance.Show_AdmobInterstitial();
     }
 
@@ -98,7 +98,7 @@ public class UiManager : MonoBehaviour
     public void OnLevelFailed()
     {
         levelFailedPanel.SetActive(true);
-        AdsDemoManager.Instance.ShowInterstitialAd();
+        AdsDemoManager.Instance.ShowInterstitialAd(()=>{});
         //AdsManager.instance.Show_AdmobInterstitial();       
     }
     public void OnContinuePlaying()
@@ -147,16 +147,17 @@ public class UiManager : MonoBehaviour
     {
         buttonClick.Play();
         SetRewardButton(UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponent<Button>());
+        
         HMSAdsKitManager.Instance.OnRewarded += ResumeGameAfterVideoWatched;
-        if (HMSAdsKitManager.Instance.rewardedView?.Loaded == true)
+        if (HMSAdsKitManager.Instance.rewardedView.Loaded == true)
         {
-            AdsDemoManager.Instance.ShowRewardedAd();
+            AdsDemoManager.Instance.ShowRewardedAd(() => { });
         }
         else
         {
             RewardAdsFailed();
         }
-        ////AdsManager.instance.Show_ResumeVideo();
+        //AdsManager.instance.Show_ResumeVideo();
     }
     public GameObject adNotavailable;
     public void RewardAdsFailed()
@@ -199,7 +200,7 @@ public class UiManager : MonoBehaviour
         buttonClick.Play();
         SetRewardButton(UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponent<Button>());
         HMSAdsKitManager.Instance.OnRewarded += TrackSkippedComplete;
-        if (HMSAdsKitManager.Instance.rewardedView?.Loaded == true)
+        if (HMSAdsKitManager.Instance.rewardedView.Loaded == true)
         {
             AdsDemoManager.Instance.ShowRewardedAd();
         }
@@ -207,7 +208,7 @@ public class UiManager : MonoBehaviour
         {
             RewardAdsFailed();
         }
-        //AdsManager.instance.Show_SkipTrackVideo();
+        AdsManager.instance.Show_SkipTrackVideo();
         AdsDemoManager.Instance.HideBannerAd();
         //AdsManager.instance.Destroy_Banner();
     }
